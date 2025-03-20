@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Tarker.Booking.Application.DataBase.Bookings.Commands.CreateBooking;
 using Tarker.Booking.Application.DataBase.Bookings.Queries.GetAllBookings;
 using Tarker.Booking.Application.DataBase.Bookings.Queries.GetBookingsByType;
+using Tarker.Booking.Application.DataBase.Customer.Commands.UpdateCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Queries.GetCustomerByDocumentNumber;
 using Tarker.Booking.Application.DataBase.User.Commands.CreateUser;
 using Tarker.Booking.Application.Exceptions;
@@ -24,8 +26,13 @@ namespace Tarker.Booking.Api.Controller
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateBookingModel model,
-            [FromServices] ICreateBookingCommand createUserCommand)
+            [FromServices] ICreateBookingCommand createUserCommand,
+            [FromServices] IValidator<CreateBookingModel> validator)
         {
+            var validate = await validator.ValidateAsync(model);
+            if (!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await createUserCommand.Execute(model);
             return StatusCode(StatusCodes.Status201Created, ResponseApiService.Response(StatusCodes.Status201Created, data));
         }

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 using Tarker.Booking.Application.DataBase.Customer.Commands.DeleteCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Commands.UpdateCustomer;
 using Tarker.Booking.Application.DataBase.Customer.Queries.GetAllCustomers;
@@ -27,8 +29,13 @@ namespace Tarker.Booking.Api.Controller
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateCustomerModel model,
-            [FromServices] ICreateCustomerCommand service)
+            [FromServices] ICreateCustomerCommand service,
+            [FromServices] IValidator<CreateCustomerModel> validator)
         {
+            var validate = await validator.ValidateAsync(model);
+            if (!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await service.Execute(model);
             return StatusCode(StatusCodes.Status201Created, ResponseApiService.Response(StatusCodes.Status201Created, data));
         }  
@@ -36,8 +43,13 @@ namespace Tarker.Booking.Api.Controller
         [HttpPut("updateCustomer")]
         public async Task<IActionResult> UpdateCustomer(
             [FromBody] UpdateCustomerModel model,
-            [FromServices] IUpdateCustomerCommand service)
+            [FromServices] IUpdateCustomerCommand service,
+            [FromServices] IValidator<UpdateCustomerModel> validator)
         {
+            var validate = await validator.ValidateAsync(model);
+            if (!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await service.Execute(model);
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
         }        

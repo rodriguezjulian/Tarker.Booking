@@ -18,9 +18,4 @@
     <ProjectReference Include="..\Tarker.Booking.Domain\Tarker.Booking.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validators\Customer\" />
-    <Folder Include="Validators\Booking\" />
-  </ItemGroup>
-
 </Project>
