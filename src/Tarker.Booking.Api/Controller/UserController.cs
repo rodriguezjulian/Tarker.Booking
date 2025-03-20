@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 using Tarker.Booking.Application.DataBase.User.Commands.CreateUser;
 using Tarker.Booking.Application.DataBase.User.Commands.DeleteUser;
 using Tarker.Booking.Application.DataBase.User.Commands.UpdateUser;
@@ -25,8 +27,13 @@ namespace Tarker.Booking.Api.Controller
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateUserModel model,
-            [FromServices] ICreateUserCommand createUserCommand)
+            [FromServices] ICreateUserCommand createUserCommand,
+            [FromServices] IValidator<CreateUserModel> validator)
         {
+            var validate = await validator.ValidateAsync(model);
+            if(!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await createUserCommand.Execute(model);
             return StatusCode(StatusCodes.Status201Created, ResponseApiService.Response(StatusCodes.Status201Created,data));
         }
@@ -34,8 +41,13 @@ namespace Tarker.Booking.Api.Controller
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateUserModel model,
-            [FromServices] IUpdateUserCommand updateUserCommand)
+            [FromServices] IUpdateUserCommand updateUserCommand,
+            [FromServices] IValidator<UpdateUserModel> validator)
         {
+            var validate = await validator.ValidateAsync(model);
+            if (!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await updateUserCommand.Execute(model);
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
         }
@@ -43,8 +55,13 @@ namespace Tarker.Booking.Api.Controller
         [HttpPut("updatePassword")]
         public async Task<IActionResult> UpdatePassword(
             [FromBody] UpdateUserPasswordModel model,
-            [FromServices] IUpdateUserPasswordCommand updateUserPasswordCommand)
+            [FromServices] IUpdateUserPasswordCommand updateUserPasswordCommand,
+            [FromServices] IValidator<UpdateUserPasswordModel> validator)
         {
+            var validate = await validator.ValidateAsync(model);
+            if (!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await updateUserPasswordCommand.Execute(model);
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
         }
@@ -86,8 +103,13 @@ namespace Tarker.Booking.Api.Controller
         public async Task<IActionResult> GetUserByUserNameAndPassword(
             string userName, 
             string password,
-        [FromServices] IGetUserByUserNameAndPasswordQuery getUserByUserNameAndPasswordQuery)
+            [FromServices] IGetUserByUserNameAndPasswordQuery getUserByUserNameAndPasswordQuery,
+            [FromServices] IValidator<(string,string)> validator)
         {
+            var validate = await validator.ValidateAsync((userName, password));
+            if (!validate.IsValid)
+                return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, validate.Errors));
+
             var data = await getUserByUserNameAndPasswordQuery.Execute(userName, password);
             if (data == null) return StatusCode(StatusCodes.Status204NoContent, ResponseApiService.Response(StatusCodes.Status204NoContent));
 

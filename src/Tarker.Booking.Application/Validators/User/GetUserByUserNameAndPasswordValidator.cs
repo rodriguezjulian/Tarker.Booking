@@ -26,7 +26,6 @@ namespace Tarker.Booking.Application.Validators.User
             .MaximumLength(50)
             .WithMessage("El campo Name es de como maximo 50 caracteres")
             ;
-
         }
     }
 }
