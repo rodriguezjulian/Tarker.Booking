@@ -71,7 +71,7 @@ namespace Tarker.Booking.Api.Controller
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
         }
 
-        [HttpGet("c/{model}")]
+        [HttpGet("getUserUserNameAndPassword/{model}")]
             public async Task<IActionResult> GetUserUserNameAndPassword(
             int model,
             [FromServices] IGetUserByIdQuery getUserByIdQuery)
