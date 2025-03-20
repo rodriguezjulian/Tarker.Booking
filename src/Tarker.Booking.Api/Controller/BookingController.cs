@@ -42,7 +42,7 @@ namespace Tarker.Booking.Api.Controller
             [FromServices] IGetAllBookingsQuery service)
         {
             var data = await service.Execute();
-            if(data.IsNullOrEmpty()) return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, data));
+            if(data == null) return StatusCode(StatusCodes.Status400BadRequest, ResponseApiService.Response(StatusCodes.Status400BadRequest, data));
             return StatusCode(StatusCodes.Status201Created, ResponseApiService.Response(StatusCodes.Status201Created, data));
         }
 

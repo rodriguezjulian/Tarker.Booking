@@ -77,6 +77,7 @@ namespace Tarker.Booking.Application
             services.AddScoped<IValidator<CreateBookingModel>, CreateBookingValidator>();
             #endregion
 
+
             return services;
         }
     }

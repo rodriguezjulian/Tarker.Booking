@@ -71,7 +71,7 @@ namespace Tarker.Booking.Api.Controller
             [FromServices] IGetAllCustomersQuery service)
         {
             var data = await service.Execute();
-            if (data.IsNullOrEmpty()) return StatusCode(StatusCodes.Status204NoContent, ResponseApiService.Response(StatusCodes.Status204NoContent));
+            if (data == null) return StatusCode(StatusCodes.Status204NoContent, ResponseApiService.Response(StatusCodes.Status204NoContent));
 
             return StatusCode(StatusCodes.Status200OK, ResponseApiService.Response(StatusCodes.Status200OK, data));
         }
@@ -92,7 +92,7 @@ namespace Tarker.Booking.Api.Controller
             string model,
             [FromServices] IGetCustomerByDocumentNumberQuery service)
         {
-            if(model.IsNullOrEmpty()) return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
+            if(model == null) return StatusCode(StatusCodes.Status404NotFound, ResponseApiService.Response(StatusCodes.Status404NotFound));
             var data = await service.Execute(model);
             if (data == null) return StatusCode(StatusCodes.Status204NoContent, ResponseApiService.Response(StatusCodes.Status204NoContent));
 
