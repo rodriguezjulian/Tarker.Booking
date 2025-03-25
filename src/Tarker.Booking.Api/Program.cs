@@ -16,5 +16,7 @@ builder.Services
 
 builder.Services.AddControllers();
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
 app.MapControllers();
 app.Run();
